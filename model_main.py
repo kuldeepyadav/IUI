@@ -138,7 +138,7 @@ def getSingleInputModel(LSTM_HIDDEN_STATES=300, FIRST_DROPOUT=0.0, SECOND_DROPOU
 postDictList, labelDictList = loadDataset()
 print "Length of data : ", len(postDictList), len(labelDictList)
 
-postDictList, labelDictList = shuffleLists (postDictList, labelDictList)
+#postDictList, labelDictList = shuffleLists (postDictList, labelDictList)
 
 #newPostDictList, newLabelDictList = filterLists(postDictList, labelDictList)
 #postDictList = newPostDictList
@@ -227,11 +227,7 @@ class ComputeMetrics(keras.callbacks.Callback):
         for key, value in self.metricsDict.items():
             if float(value[0]) > f_score:
                f_score = float(value[0])
-	    
-            if float(value[1]) > precision:
-               precision = float(value[1])
-
-	    if float(value[2]) > recall:
+	       precision = float(value[1])
 	       recall = float(value[2])
 
 	return f_score, precision, recall
@@ -239,16 +235,16 @@ class ComputeMetrics(keras.callbacks.Callback):
 
 
 evaluation = ComputeMetrics()
-model = getSingleInputModel (100, 0.2, 0.3, 100, maxSeqLen)
+model = getSingleInputModel (300, 0.0, 0.0, 300, maxSeqLen)
 model.fit({'input1' : trainX[:TRAIN_THRESHOLD], 'output': trainY[:TRAIN_THRESHOLD]}, batch_size=64, nb_epoch=50, show_accuracy=True, callbacks=[evaluation])
 f_score, precision, recall  = evaluation.getMaximums()
 print f_score, precision, recall
 
-evaluation = ComputeMetrics()
-model = getSingleInputModel (300, 0.2, 0.3, 300, maxSeqLen)
-model.fit({'input1' : trainX[:TRAIN_THRESHOLD], 'output': trainY[:TRAIN_THRESHOLD]}, batch_size=64, nb_epoch=50, show_accuracy=True, callbacks=[evaluation])
-f_score, precision, recall  = evaluation.getMaximums()
-print f_score, precision, recall
+#evaluation = ComputeMetrics()
+#model = getSingleInputModel (300, 0.2, 0.3, 300, maxSeqLen)
+#model.fit({'input1' : trainX[:TRAIN_THRESHOLD], 'output': trainY[:TRAIN_THRESHOLD]}, batch_size=64, nb_epoch=50, show_accuracy=True, callbacks=[evaluation])
+#f_score, precision, recall  = evaluation.getMaximums()
+#print f_score, precision, recall
 
 #accuracy  = model.evaluate({'input1' : trainX[4500:], 'input2' : newTrainCharX[4500:], 'output': trainY[4500:]})
 #print accuracy

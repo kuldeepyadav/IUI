@@ -94,7 +94,7 @@ def dumpPostTaggedWithLabels(postDictList, labelDictList, filePath = '', fileNam
 
 
 def readDatasetDirectory():
-    #bookList = ['AI1', 'IP2', 'OS1', 'OS4', 'CN4', 'IP3', 'OS2']
+    bookList = ['CN5']
     allBookPaths = []
     allDirs = []
     for (dirpath, dirnames, filenames) in walk(DATABASEPATH):
@@ -104,11 +104,13 @@ def readDatasetDirectory():
             dirFiles = os.listdir(subDirPath)	
             bookPath = {}
             for eachFile in dirFiles:
+		if 'CN5' not in eachFile:
+		    continue
                 if 'xx2' in eachFile:
                     bookPath['dirpath'] = os.path.join(subDirPath, '')
                     bookPath['posts'] = os.path.join(subDirPath, eachFile)                    
                 elif 'zz2' in eachFile:
-		   		    bookPath['keywords'] = os.path.join(subDirPath, eachFile)
+		    bookPath['keywords'] = os.path.join(subDirPath, eachFile)
             
             if bookPath:
                 allBookPaths.append(bookPath)
@@ -134,17 +136,17 @@ def readDataset():
         postDictList = []
         labelDictList= []
         for eachPost, eachKeyword in zip(postList, keywordList):
-            postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword)
+            postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword, keywordList)
             postDictList.append(postDict)
             labelDictList.append(labelDict)
 
-        dumpPostTaggedWithLabels(postDictList, labelDictList, eachBook['dirpath'], 'postsWithLabels.txt')
+        dumpPostTaggedWithLabels(postDictList, labelDictList, eachBook['dirpath'], 'printedOutput.txt')
         dumpLabelsToFile(labelDictList, eachBook['dirpath'], 'labels.txt')
 
         print "length of updated dict : ", len(postDictList), len(labelDictList)
 
 
-def findLabelDictForPost(postTitle, keyword):
+def findLabelDictForPost(postTitle, keyword, keywordList):
     
     initialTokens = postTitle.split(' ')
     tags = keyword.split(' ')
@@ -197,6 +199,25 @@ def findLabelDictForPost(postTitle, keyword):
         
         
     #print "Post dict 2 is : ", postDict, labelDict 
+
+    for keyword in keywordList:
+        
+	keywordTokens = keyword.split (' ')
+	
+	total_matches = 0
+	indexes = []
+
+	for eachToken in keywordTokens:
+	    for index, value in postDict.items():
+		if fuzzy_match (eachToken, value):
+	           total_matches = total_matches + 1
+		   indexes.append(index)
+
+	if total_matches == len(keywordTokens):
+	   print "matched : ", keywordTokens
+	   for index in indexes:
+	       labelDict[index] = 1
+	
 
     return postDict, labelDict   
 

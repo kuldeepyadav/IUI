@@ -55,9 +55,20 @@ def evaluateModel(classes, testY):
 
     totalTP, totalTN, totalFP, totalFN = computeRowWisePrecisionRecall(allGroundTruthRows, allPredictedRows)
 
-    precision_score = float(totalTP) / (totalTP + totalFP)
-    recall_score = float(totalTP) / (totalTP + totalFN)
-    f_score = 2 * (precision_score * recall_score) / (precision_score + recall_score)
+    if totalTP + totalFP > 0.0:
+	precision_score = float(totalTP) / (totalTP + totalFP)
+    else:
+        precision_score = 0.0
+
+    if totalTP + totalFN > 0.0:
+    	recall_score = float(totalTP) / (totalTP + totalFN)
+    else:
+	recall_score = 0.0
+
+    if precision_score + recall_score > 0.0:
+    	f_score = 2 * (precision_score * recall_score) / (precision_score + recall_score)
+    else:
+	f_score = 0.0
 
     return f_score, precision_score, recall_score
 
