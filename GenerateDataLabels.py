@@ -135,8 +135,11 @@ def readDataset():
 
         postDictList = []
         labelDictList= []
+	uniqueKeywordList = list(set(keyWordList))
+	print "number of unique keywords are : ", len(uniqueKeywordList)
+
         for eachPost, eachKeyword in zip(postList, keywordList):
-            postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword, keywordList)
+            postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword, uniqueKeywordList)
             postDictList.append(postDict)
             labelDictList.append(labelDict)
 
