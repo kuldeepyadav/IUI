@@ -138,7 +138,7 @@ def getSingleInputModel(LSTM_HIDDEN_STATES=300, FIRST_DROPOUT=0.0, SECOND_DROPOU
 postDictList, labelDictList = loadDataset()
 print "Length of data : ", len(postDictList), len(labelDictList)
 
-#postDictList, labelDictList = shuffleLists (postDictList, labelDictList)
+postDictList, labelDictList = shuffleLists (postDictList, labelDictList)
 
 #newPostDictList, newLabelDictList = filterLists(postDictList, labelDictList)
 #postDictList = newPostDictList

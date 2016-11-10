@@ -35,7 +35,10 @@ def readDatasetDirectory():
             allDirs.append(subDirPath)
             dirFiles = os.listdir(subDirPath)   
             bookPath = {}
+	    
             for eachFile in dirFiles:
+		if 'CN5' not in os.path.join(subDirPath,eachFile):
+		    continue
                 if 'posts' in eachFile:
                     bookPath['posts'] = os.path.join(subDirPath, eachFile)                    
                 elif 'labels' in eachFile:
@@ -43,7 +46,7 @@ def readDatasetDirectory():
             
             if bookPath:
                 allBookPaths.append(bookPath)
-                break
+                
         
     #print allDirs, len(allDirs)
     #print allBookPaths, len(allBookPaths)

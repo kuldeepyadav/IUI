@@ -11,7 +11,7 @@ charEmbeddingPath = "/home/kuldeep/entitydetection/IUI/embeddings/"
 posNPArrayPath = DATABASEPATH + "PosNPArray.pickle"
 wordEmbeddingSize = 300
 charEmbeddingSize = 40
-TRAIN_THRESHOLD = 50000
+TRAIN_THRESHOLD = 15000
 
 
 

@@ -20,7 +20,7 @@ from ReadPreProcessedDataFromFiles import *
 #from GenerateCharEmbeddings import *
 from configuration import *
 
-#from Utilities import *
+from Utilities import *
 from os import walk
 import os
 import pickle
@@ -45,6 +45,18 @@ def initializeGlobalVariables():
 def normalize(s):    
     words = tokenize.wordpunct_tokenize(s.lower().strip())
     return ' '.join([stemmer.stem(w) for w in words])
+
+def exact_match(s1, s2):
+    s1_new = s1.decode('utf8')
+    s2_new = s2.decode('utf8')
+
+    if s1_new.strip() == s2_new.strip():
+       return True
+    elif normalize(s1_new) == normalize(s2_new):
+       return True
+    else:
+       return False
+
  
 def fuzzy_match(s1, s2, max_dist=1):
     s1_new = s1.decode('utf8')
@@ -104,7 +116,7 @@ def readDatasetDirectory():
             dirFiles = os.listdir(subDirPath)	
             bookPath = {}
             for eachFile in dirFiles:
-		if 'CN5' not in eachFile:
+		if 'CN5' in eachFile:
 		    continue
                 if 'xx2' in eachFile:
                     bookPath['dirpath'] = os.path.join(subDirPath, '')
@@ -135,13 +147,18 @@ def readDataset():
 
         postDictList = []
         labelDictList= []
-	uniqueKeywordList = list(set(keyWordList))
+	uniqueKeywordList = list(set(keywordList))
 	print "number of unique keywords are : ", len(uniqueKeywordList)
 
+	i = 0
         for eachPost, eachKeyword in zip(postList, keywordList):
             postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword, uniqueKeywordList)
             postDictList.append(postDict)
             labelDictList.append(labelDict)
+	    if i % 1000 == 0:
+	       print "Finished : ", i 
+	       #break
+	    i = i + 1
 
         dumpPostTaggedWithLabels(postDictList, labelDictList, eachBook['dirpath'], 'printedOutput.txt')
         dumpLabelsToFile(labelDictList, eachBook['dirpath'], 'labels.txt')
@@ -208,16 +225,22 @@ def findLabelDictForPost(postTitle, keyword, keywordList):
 	keywordTokens = keyword.split (' ')
 	
 	total_matches = 0
+        matched_words = []
 	indexes = []
 
 	for eachToken in keywordTokens:
 	    for index, value in postDict.items():
-		if fuzzy_match (eachToken, value):
+		if exact_match (eachToken, value):
 	           total_matches = total_matches + 1
 		   indexes.append(index)
+		   matched_words.append(eachToken)
 
-	if total_matches == len(keywordTokens):
-	   print "matched : ", keywordTokens
+	#uniquedMatchedWords = List(set(matched_words))
+	commonWords = list(set(matched_words) & set(keywordTokens))
+
+	if len(commonWords) == len(keywordTokens):
+	   #print "post : ", convertDictToPost(postDict)
+	   #print "matched : ", keywordTokens, indexes
 	   for index in indexes:
 	       labelDict[index] = 1
 	
