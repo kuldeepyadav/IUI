@@ -1,6 +1,6 @@
 
 
-DATABASEPATH = "/home/kuldeep/entitydetection/IUI/Dataset/"
+DATABASEPATH = "/home/rkuldeep/entitydetection/IUI/Dataset/"
 #DATABASEPATH = "D:\\udacity_2\\tensorflow-udacity-vagrant\\assignments\\stackoverflow\\multipleBookText\\Dataset\\"
 
 

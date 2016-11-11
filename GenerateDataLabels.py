@@ -24,6 +24,7 @@ from Utilities import *
 from os import walk
 import os
 import pickle
+import time
 
 
 WordEmbedPATH = ""
@@ -106,9 +107,12 @@ def dumpPostTaggedWithLabels(postDictList, labelDictList, filePath = '', fileNam
 
 
 def readDatasetDirectory():
-    bookList = ['CN5']
+    bookList = ['OS2', 'OS4']
     allBookPaths = []
     allDirs = []
+    
+    print "Reading dataset : ", DATABASEPATH
+
     for (dirpath, dirnames, filenames) in walk(DATABASEPATH):
         for dirname in dirnames:
             subDirPath = os.path.join(dirpath, dirname)
@@ -116,7 +120,9 @@ def readDatasetDirectory():
             dirFiles = os.listdir(subDirPath)	
             bookPath = {}
             for eachFile in dirFiles:
-		if 'CN5' in eachFile:
+		print "Reading : ", eachFile
+		if 'OS2' not in os.path.join(subDirPath, eachFile):
+		    print "Found OS"
 		    continue
                 if 'xx2' in eachFile:
                     bookPath['dirpath'] = os.path.join(subDirPath, '')
@@ -126,7 +132,7 @@ def readDatasetDirectory():
             
             if bookPath:
                 allBookPaths.append(bookPath)
-                break
+                
 	    
     #print allDirs, len(allDirs)
     #print allBookPaths, len(allBookPaths)
@@ -149,14 +155,18 @@ def readDataset():
         labelDictList= []
 	uniqueKeywordList = list(set(keywordList))
 	print "number of unique keywords are : ", len(uniqueKeywordList)
+	dumpToFile(uniqueKeywordList, eachBook['dirpath'], "uniqueKeywords.txt")
 
 	i = 0
+	starttime = time.time()
         for eachPost, eachKeyword in zip(postList, keywordList):
             postDict, labelDict = findLabelDictForPost(eachPost, eachKeyword, uniqueKeywordList)
             postDictList.append(postDict)
             labelDictList.append(labelDict)
 	    if i % 1000 == 0:
-	       print "Finished : ", i 
+	       diffTime = time.time() - starttime
+	       starttime = time.time()
+	       print "Finished : ", i, diffTime
 	       #break
 	    i = i + 1
 
@@ -220,9 +230,20 @@ def findLabelDictForPost(postTitle, keyword, keywordList):
         
     #print "Post dict 2 is : ", postDict, labelDict 
 
+    #f = open("matchinglogs.txt", "a")
+    #f.write ("post : " +  convertDictToPost(postDict) + "\n")
+
     for keyword in keywordList:
         
+	#f.write ("matching keyword : " + keyword + "\n")
 	keywordTokens = keyword.split (' ')
+
+	newKeywordTokens = []
+	for eachToken in keywordTokens:
+	    if len(eachToken.strip()) > 0:
+	       newKeywordTokens.append(eachToken)
+
+	keywordTokens= newKeywordTokens
 	
 	total_matches = 0
         matched_words = []
@@ -237,14 +258,17 @@ def findLabelDictForPost(postTitle, keyword, keywordList):
 
 	#uniquedMatchedWords = List(set(matched_words))
 	commonWords = list(set(matched_words) & set(keywordTokens))
+	#f.write ("post : " +  convertDictToPost(postDict) + "\n")
+	#f.write ("matched words : " + str(matched_words) + "   ") 
+	#f.write ("keyword tokens : " + str(keywordTokens) + "\n")
 
 	if len(commonWords) == len(keywordTokens):
-	   #print "post : ", convertDictToPost(postDict)
-	   #print "matched : ", keywordTokens, indexes
+	   #print "post : ", convertDictToPost(postDict), len(commonWords)
+	   #print  "matched : ", keywordTokens, indexes, matched_words
 	   for index in indexes:
 	       labelDict[index] = 1
 	
-
+    #f.close()	
     return postDict, labelDict   
 
 
