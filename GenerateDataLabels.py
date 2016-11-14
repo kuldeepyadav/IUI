@@ -25,6 +25,7 @@ from os import walk
 import os
 import pickle
 import time
+import sys
 
 
 WordEmbedPATH = ""
@@ -106,8 +107,8 @@ def dumpPostTaggedWithLabels(postDictList, labelDictList, filePath = '', fileNam
             f.write (str(fullPost.strip()) + '\n')
 
 
-def readDatasetDirectory():
-    bookList = ['OS2', 'OS4']
+def readDatasetDirectory(folderName):
+    
     allBookPaths = []
     allDirs = []
     
@@ -121,8 +122,7 @@ def readDatasetDirectory():
             bookPath = {}
             for eachFile in dirFiles:
 		print "Reading : ", eachFile
-		if 'OS2' not in os.path.join(subDirPath, eachFile):
-		    print "Found OS"
+		if folderName  not in os.path.join(subDirPath, eachFile):
 		    continue
                 if 'xx2' in eachFile:
                     bookPath['dirpath'] = os.path.join(subDirPath, '')
@@ -138,9 +138,9 @@ def readDatasetDirectory():
     #print allBookPaths, len(allBookPaths)
     return allBookPaths
 
-def readDataset():
+def readDataset(folderName):
     
-    allBookPaths = readDatasetDirectory()
+    allBookPaths = readDatasetDirectory(folderName)
     print "length of all books dict is : ", len(allBookPaths)
     
     for eachBook in allBookPaths:
@@ -272,8 +272,11 @@ def findLabelDictForPost(postTitle, keyword, keywordList):
     return postDict, labelDict   
 
 
-initializeGlobalVariables()
-readDataset()
+if  __name__ == "__main__":
+    
+    print "arguments : ", str(sys.argv), len(sys.argv)
+    initializeGlobalVariables()
+    readDataset(sys.argv[1])
 
 
 
