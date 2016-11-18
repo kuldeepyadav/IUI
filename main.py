@@ -37,8 +37,8 @@ def readDatasetDirectory():
             bookPath = {}
 	    
             for eachFile in dirFiles:
-		if 'CN5' not in os.path.join(subDirPath,eachFile):
-		    continue
+		#if 'CN5' not in os.path.join(subDirPath,eachFile):
+		#    continue
                 if 'posts' in eachFile:
                     bookPath['posts'] = os.path.join(subDirPath, eachFile)                    
                 elif 'labels' in eachFile:

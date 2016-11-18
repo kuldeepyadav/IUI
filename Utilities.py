@@ -20,7 +20,7 @@ def getTrainingData(postNPArray, labelNPArray):
     totalX = postNPArray
     totalY = cLabelNPArray
    
-    print "Size of total vectors : ", totalX.shape, totalY.shape
+    #print "Size of total vectors : ", totalX.shape, totalY.shape
     #print "Size of testing vectors : ", testX.shape, testY.shape
     #print ("testy.shape", testY[0])
     return totalX, totalY  

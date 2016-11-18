@@ -82,7 +82,8 @@ class NumpyArrayConversion:
                     failCount = failCount + 1
             newPosts.append (newPost)
         
-        print "Embedding failure count ", failCount, len(newPosts)
+	if failCount > 0:
+            print "Embedding failure count ", failCount, len(newPosts)
         
         return newPosts
     
@@ -98,7 +99,7 @@ class NumpyArrayConversion:
             npPostArray[index][:len(post.values())] = post.values()
             index = index + 1
     
-        print "Numpy post array shape : ", index, npPostArray.shape
+        #print "Numpy post array shape : ", index, npPostArray.shape
     
         npLabelsArray = np.zeros (shape = (postLength, self.maxSeqLen), dtype = np.float32)
     
@@ -109,7 +110,7 @@ class NumpyArrayConversion:
             #map(lambda x: x + 1, label_values)
             index = index + 1
     
-        print "Numpy label array shape : ", index, npLabelsArray.shape
+        #print "Numpy label array shape : ", index, npLabelsArray.shape
     
         return npPostArray, npLabelsArray    
         
