@@ -68,7 +68,7 @@ def readDataset():
    	    #print postDictList[0], labelDictList[0]
 
     newPostDict, newLabelDict = cleanLists(postDictList, labelDictList)
-    picklePath = DATABASEPATH + "postLabelDict.pickle"
+    picklePath = DATABASEPATH + "OS4_postLabelDict.pickle"
     postlabelDict = {"posts": newPostDict, "labels": newLabelDict}
     pickle.dump(postlabelDict, open(picklePath, "wb" ))
     print "Dumped postlabeldict to : ", picklePath

@@ -1,5 +1,6 @@
 
 import numpy as np
+from collections import OrderedDict
 
 def getRefinedRow(eachRow):
     refinedRow = []
@@ -72,3 +73,28 @@ def evaluateModel(classes, testY):
 
     return f_score, precision_score, recall_score
 
+
+def getKeywords(classes, postDictList):
+
+    allOutputs = classes['output']
+    #print allOutputs.shape
+
+    allPredictedRows = getReverseCategorical(allOutputs)
+    print "predicted rows  : ", len(allPredictedRows)
+    print allPredictedRows[0]
+    print postDictList[0]
+    
+    keywordDictList = []
+    for postDict, predictedLabels in zip(postDictList, allPredictedRows):
+        postDictLen = len(postDict.values())
+        keywordDict = OrderedDict()
+        for i in range(postDictLen):
+            if predictedLabels[i] == 1:
+                keywordDict[i] = postDict[i+1]
+
+        keywordDictList.append(keywordDict)
+
+    return keywordDictList
+
+
+    

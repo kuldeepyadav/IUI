@@ -38,7 +38,7 @@ import time
 
 def loadDataset(): 
 
-    picklePath = DATABASEPATH + "postLabelDict.pickle"
+    picklePath = DATABASEPATH + "OS4_postLabelDict.pickle"
     postLabelDict = pickle.load(open(picklePath, "rb" ))
     return postLabelDict["posts"], postLabelDict["labels"]
 
@@ -224,7 +224,7 @@ print "Length of data after shuffling : ", len(trainPostDictList), len(trainLabe
 
 model.save('allBooks_Keras_model.h5')
 json_string = model.to_json()
-with ("model_specification.json", "w"):
+with open("model_specification.json", "w") as f:
      f.write (json_string)
 
 model.save_weights('allBooks_Keras_weights.h5')

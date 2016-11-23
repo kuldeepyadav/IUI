@@ -87,7 +87,7 @@ class NumpyArrayConversion:
         
         return newPosts
     
-    def prepareNumPyArray(self, newPosts, labels):
+    def prepareNumPyArray(self, newPosts, labels, labelExists = True):
         postLength = len(newPosts)
     
         npPostArray = np.zeros (shape = (postLength, self.maxSeqLen, self.embeddingSize), dtype = np.float32)
@@ -100,23 +100,26 @@ class NumpyArrayConversion:
             index = index + 1
     
         #print "Numpy post array shape : ", index, npPostArray.shape
-    
         npLabelsArray = np.zeros (shape = (postLength, self.maxSeqLen), dtype = np.float32)
+
+        if labelExists == True:
     
-        index = 0    
-        for label in labels:
-            #label_values = label.values() 
-            npLabelsArray[index][:len(label.values())] = label.values() 
-            #map(lambda x: x + 1, label_values)
-            index = index + 1
+            index = 0    
+            for label in labels:
+                #label_values = label.values() 
+                npLabelsArray[index][:len(label.values())] = label.values() 
+                #map(lambda x: x + 1, label_values)
+                index = index + 1
     
-        #print "Numpy label array shape : ", index, npLabelsArray.shape
+            #print "Numpy label array shape : ", index, npLabelsArray.shape
     
         return npPostArray, npLabelsArray    
+	
+	    
         
-    def getNumPyArray (self, posts, labels):
+    def getNumPyArray (self, posts, labels, labelExists = True):
         newPosts = self.associateWordEmbeddings(posts)
-        npPostArray, npLabelsArray = self.prepareNumPyArray(newPosts, labels)
+        npPostArray, npLabelsArray = self.prepareNumPyArray(newPosts, labels, labelExists)
         return npPostArray, npLabelsArray       
         
         

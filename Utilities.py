@@ -85,6 +85,31 @@ def cleanLists(postDictList, labelDictList, filterAllZeros = False):
     print "Num of short and long posts are : ", numShortPosts, numLongPosts
     return newPostDictList, newLabelDictList
 
+
+def cleanPostList(postDictList):
+
+    newPostDictList = []
+
+    numShortPosts = 0
+    numLongPosts = 0    
+
+    for postDict in postDictList:
+        
+        if len(postDict.values()) < 4:
+           numShortPosts = numShortPosts + 1
+           continue
+
+        if len(postDict.values()) >= 100:
+           numLongPosts = numLongPosts + 1
+           print "Long list : ", convertDictToPost(postDict)
+           continue
+
+        newPostDictList.append(postDict)
+        
+
+    print "Num of short and long posts are : ", numShortPosts, numLongPosts
+    return newPostDictList
+
 def shuffleLists (postDictList, labelDictList):
 
     combinedList = list(zip(postDictList, labelDictList))
