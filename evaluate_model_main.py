@@ -5,8 +5,8 @@ Created on Fri Oct 07 17:24:27 2016
 @author: q409NMNQ
 """
 
-from ReadSentencesFromFiles import *
-#from ReadDataFromFiles import *
+#from ReadSentencesFromFiles import *
+from ReadDataFromFiles import *
 #from PartofSpeechExtraction import *
 from NumpyArrayConversion import *
 #from GenerateCharEmbeddings import *
@@ -31,7 +31,7 @@ from keras.models import model_from_json
 from itertools import groupby
 from operator import itemgetter
 
-from collection import Counter
+from collections import Counter
 
 from Utilities import *
 from os import walk
@@ -75,7 +75,7 @@ def groupIndexes(indexList):
     for k, g in groupby(enumerate(indexList), lambda (i, x): i-x):
 	groupedIndexList.append(map(itemgetter(1), g))
 
-    return groupIndexList
+    return groupedIndexList
 
 
 class LabelPost:
@@ -91,6 +91,26 @@ class LabelPost:
 
         print "Model loaded with weights"
 
+    def evaluateLabels (self, postDictList, labelDictList):
+
+        postNPArray, labelNPArray = self.conversionInstance.getNumPyArray (postDictList, labelDictList, True)
+        testX, testY = getTrainingData(postNPArray, labelNPArray)
+        print "shape of textx and test Y : ", testX.shape, testY.shape
+
+
+        y_pred = self.model.predict({'input1' : testX})
+        keywordDictList = getKeywords(y_pred, postDictList)
+        allKeyPhrases = self.getKeyPhrases(keywordDictList)
+        phraseDict = Counter(allKeyPhrases)
+
+        f_score, precision, recall = evaluateModel(y_pred, testY)
+        print "eval metrics ", f_score, precision, recall
+
+        #print "Phrase dict is : ", str(phraseDict)
+
+	return phraseDict, keywordDictList
+
+
     def generateLabels(self, postDictList, labelDictList):
         postNPArray, labelNPArray = self.conversionInstance.getNumPyArray (postDictList, None, False)
         testX, testY = getTrainingData(postNPArray, labelNPArray)
@@ -103,13 +123,13 @@ class LabelPost:
         #f_score, precision, recall = evaluateModel(y_pred, testY)
         #print "eval metrics ", f_score, precision, recall
 
-	allKeyPhrases = getKeyPhrases(keywordDictList)
+	allKeyPhrases = self.getKeyPhrases(keywordDictList)
 
 	phraseDict = Counter(allKeyPhrases)
 
         return phraseDict, keywordDictList 
 
-    def getIndexKeywords(keywordDict, indexList):
+    def getIndexKeywords(self, keywordDict, indexList):
 
 	keywords = []
 	for eachIndex in indexList:
@@ -128,8 +148,8 @@ class LabelPost:
 	    
 	    groupedIndexList = groupIndexes(eachDict.keys())
 
-	    for eachIndexList in groupIndexList:
-		keyPhrase = getKeywords(eachDict, indexList)
+	    for eachIndexList in groupedIndexList:
+		keyPhrase = self.getIndexKeywords(eachDict, eachIndexList)
 		allKeyPhrases.append(keyPhrase)
 			
 	return allKeyPhrases
@@ -184,6 +204,8 @@ def readDataset():
 
         phraseDict, keywordDictList  = labelPostInstance.generateLabels(postDictList, [])
 
+	print "phrase dict is : ", str(phraseDict)
+
         generatedKeywordsPath = eachBook['posts'].replace ('en.txt', '_keywords.txt')
 
         with open(generatedKeywordsPath, 'w') as f:
@@ -205,8 +227,8 @@ def readDataset():
 
 def evaluateUsingSingleFile():
 
-    EVALFILEPATH = "/assignments/IUI/Dataset/OS4/posts.txt"
-    LABELFILEPATH = "/assignments/IUI/Dataset/OS4/labels.txt"
+    EVALFILEPATH = "/home/rkuldeep/entitydetection/IUI/Dataset/AI2/posts.txt"
+    LABELFILEPATH = "/home/rkuldeep/entitydetection/IUI/Dataset/AI2/labels.txt"
 
     labelPostInstance = LabelPost()    
     postDictList, labelDictList = readFiles (EVALFILEPATH, LABELFILEPATH)
@@ -215,10 +237,10 @@ def evaluateUsingSingleFile():
     postDictList, labelDictList = cleanLists(postDictList, labelDictList)
     print "Length of post dict list after cleaning: ", len(postDictList), len(labelDictList)
 
-    keywordDictList = labelPostInstance.generateLabels(postDictList, labelDictList)
+    phraseDict, keywordDictList = labelPostInstance.evaluateLabels(postDictList, labelDictList)
 
 
 
-#evaluateUsingSingleFile()
-readDataset()
+evaluateUsingSingleFile()
+#readDataset()
 

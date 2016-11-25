@@ -24,7 +24,7 @@ TRAIN_THRESHOLD = 130000
 MODELFOLDERNAME = '/home/rkuldeep/entitydetection/IUI/models/Algo/'
 
 MODELPATH = MODELFOLDERNAME + 'model_specifications.json'
-MODELWEIGHTS = MODELFOLDERNAME + 'allBooksKerasModel_49.h5'
+MODELWEIGHTS = MODELFOLDERNAME + 'allBooksKerasModel_25.h5'
 
 
 
