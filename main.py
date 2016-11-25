@@ -37,8 +37,8 @@ def readDatasetDirectory():
             bookPath = {}
 	    
             for eachFile in dirFiles:
-		#if 'CN5' not in os.path.join(subDirPath,eachFile):
-		#    continue
+		if 'Algo' not in os.path.join(subDirPath, eachFile):
+		    continue
                 if 'posts' in eachFile:
                     bookPath['posts'] = os.path.join(subDirPath, eachFile)                    
                 elif 'labels' in eachFile:
@@ -68,7 +68,7 @@ def readDataset():
    	    #print postDictList[0], labelDictList[0]
 
     newPostDict, newLabelDict = cleanLists(postDictList, labelDictList)
-    picklePath = DATABASEPATH + "OS4_postLabelDict.pickle"
+    picklePath = DATABASEPATH + "Algo_postLabelDict.pickle"
     postlabelDict = {"posts": newPostDict, "labels": newLabelDict}
     pickle.dump(postlabelDict, open(picklePath, "wb" ))
     print "Dumped postlabeldict to : ", picklePath

@@ -38,7 +38,7 @@ import time
 
 def loadDataset(): 
 
-    picklePath = DATABASEPATH + "OS4_postLabelDict.pickle"
+    picklePath = PICKLEFILEPATH
     postLabelDict = pickle.load(open(picklePath, "rb" ))
     return postLabelDict["posts"], postLabelDict["labels"]
 
@@ -172,11 +172,11 @@ testX, testY = getTrainingData(testPostNPArray, testLabelNPArray)
 print "Dimensions of test data : ", testX.shape, testY.shape
 
 
-numEpochs = 25
+numEpochs = 50
 batch_size = 64
 maxIndex = len(trainPostDictList)
 
-model = getSingleInputModel (300, 0.0, 0.0, 300, maxSeqLen)
+model = getSingleInputModel (300, 0.5, 0.5, 300, maxSeqLen)
 
 print "Model compileds, starting training with epochs and batch size : ", numEpochs, batch_size
 
@@ -200,7 +200,7 @@ for epochIndex in range(numEpochs):
         startIndex = lastIndex
 	lastIndex = startIndex + batch_size
 
-	if lastIndex % 100032 == 0:
+	if lastIndex % 50032 == 0:
 	   print "One l rows completed ", time.time() - startTime
 	   startTime = time.time()
 
@@ -212,23 +212,23 @@ for epochIndex in range(numEpochs):
         f.write(str(epochIndex) + "," + str(f_score) + "," + str(precision) + "," + str(recall) + "\n") 
 
     json_string = model.to_json()
-    with open("model_specifications.json", "w") as f:
+    with open(MODELFOLDERNAME + "model_specifications.json", "w") as f:
          f.write (json_string)
 
-    model.save_weights('allBooksKerasWeights_' + str(epochIndex) + '.h5')
-    model.save('allBooksKerasModel_' + str(epochIndex) + '.h5')
+    model.save_weights(MODELFOLDERNAME + 'allBooksKerasWeights_' + str(epochIndex) + '.h5')
+    model.save(MODELFOLDERNAME + 'allBooksKerasModel_' + str(epochIndex) + '.h5')
 
 
 trainPostDictList, trainLabelDictList = shuffleLists (trainPostDictList, trainLabelDictList)
 print "Length of data after shuffling : ", len(trainPostDictList), len(trainLabelDictList)
 
-model.save('allBooks_Keras_model.h5')
+model.save(MODELFOLDERNAME + 'allBooks_Keras_model.h5')
 json_string = model.to_json()
-with open("model_specification.json", "w") as f:
+with open(MODELFOLDERNAME + "model_specification.json", "w") as f:
      f.write (json_string)
 
-model.save_weights('allBooks_Keras_weights.h5')
-model.save('allBooks_Keras_model.h5')
+model.save_weights(MODELFOLDERNAME + 'allBooks_Keras_weights.h5')
+#model.save('allBooks_Keras_model.h5')
 
 
 
